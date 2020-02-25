@@ -1,0 +1,34 @@
+<div class="report-header blue strong" style="margin-top:25px;">{{ title }}</div>
+<table class="report-table" style="margin-top:15px;">
+    <tr>
+        <td><div class="strong italic">Answering: {{ result[0].ct }}</div></td>
+        <td></td>
+        <td class="report-td-calcs blue strong">Count</td>
+        <td class="report-td-calcs blue strong">Percent</td>
+    </tr>
+    {% set total = result|sumProperty('ct') %}
+    {% for q in result %}
+        {% set percent = total ? q.ct / total : 0 %}
+        <tr>
+            <td>{{ q.item }}</td>
+            <td class="report-td-chart">
+                <div class="report-div-container">
+                    <div class="report-div-slice">&nbsp;</div>
+                    <div class="report-div-slice">&nbsp;</div>
+                    <div class="report-div-slice">&nbsp;</div>
+                    <div class="report-div-slice">&nbsp;</div>
+                    <div class="report-div-slice">&nbsp;</div>
+                    <div class="report-div-barchart" style="width: {{ percent * 100 }}%;"></div>
+                </div>
+            </td>
+            <td class="report-td-calcs">{{ q.ct|number_format }}</td>
+            <td class="report-td-calcs">{{ (percent * 100)|number_format(1) }}%</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td class="strong">TOTAL:</td>
+        <td></td>
+        <td class="report-td-calcs strong">{{ sum_hours|number_format }}</td>
+        <td class="report-td-calcs strong">100%</td>
+    </tr>
+</table>

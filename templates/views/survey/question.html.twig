@@ -1,0 +1,50 @@
+{% extends 'views/survey/page.html.twig' %}
+
+{% block outside_container %}
+    {{ parent() }}
+
+    {% embed 'partials/modal.html.twig' with {id: 'question-modal'} %}
+        {% block title %}{% if question %}<span class='glyphicon glyphicon-pencil'></span> Edit Item{% else %}Add New Item{% endif %}{% endblock %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="chkQuestionEnabled" value="1" {{ question.question_enabled ? 'checked' }}> <strong>Visible On Survey</strong></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionCode">Item Code:</label>
+                        <input id="questionCode" name="txtQuestionCode" class="form-control" maxlength="40" placeholder="Item Code" value="{{ question.question_code }}" style="width:200px;" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionDesc">Item Name:</label>
+                        <input id="questionDesc" name="txtQuestionDesc" class="form-control" maxlength="1000" placeholder="Item Name" value="{{ question.question_desc }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionExtra">Item Description:</label>
+                        <input id="questionExtra" name="txtQuestionExtra" class="form-control" maxlength="1500" placeholder="Item Description" value="{{ question.questionExtra }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionDescAlt">Alternate Item Name (optional):</label>
+                        <input id="questionDescAlt" name="txtQuestionDescAlt" class="form-control" maxlength="1000" placeholder="Alternate Item Name (optional)" value="{{ question.question_desc_alt }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionExtraAlt">Alternate Item Description (optional):</label>
+                        <input id="questionExtraAlt" name="txtQuestionExtraAlt" class="form-control" maxlength="1500" placeholder="Alternate Item Description (optional)" value="{{ question.question_extra_alt }}" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" name="btnSaveItem" value="Save Edits" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

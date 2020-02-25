@@ -1,0 +1,102 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+
+    <form name="frmInd" method="post">
+        <div class="row" style="margin-bottom:25px;">
+            <div class="col-sm-3"><span class="blue largetext">Select a respondent:</span></div>
+            <div class="col-sm-9">
+                <select class="form-control" name="respondentId" id="idSlctResp">
+                    <option value=""> - SELECT INDIVIDUAL - </option>
+                    {% for resp in respondents %}
+                        <option value="{{ resp.resp_id }}" {{ request.getParam('respondentId') == resp.resp_id ? 'selected' }}>{{ resp.resp_last }}, {{ resp.resp_first }} ({{ resp.custom }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+    <div id="PDFout">
+        <table class="report-mainheader">
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right">
+                    <a class="btn btn-primary btn-sm" id="pdf"><span class="glyphicon glyphicon-export" style="text-align: right"></span> <span style="font-size: 10px !important;"> Export PDF</span></a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="{{ survey_info.logo_survey }}" width="130" />
+                </td>
+                <td>
+                    <div class="report-survey-name">{{ survey_info.survey_name }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="strong">Individual Report</span>
+                </td>
+                <td>
+                    <div class="report-survey-name" style="font-size:14px;"></div>
+                </td>
+            </tr>
+        </table>
+
+
+        {% if respondent %}
+            <div style="margin-bottom:25px;">
+                <table width="100%">
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">Employee Name:</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">{{ respondent.resp_first }} {{ respondent.resp_last }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">Survey Date:</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">{{ respondent.last_dt }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">Access Code:</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">{{ respondent.resp_access_code }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">E-mail Address:</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">{{ respondent.resp_email }}</td>
+                    </tr>
+
+                    {% for c in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] %}
+                        {% if survey_info["cust_#{c}_label"] %}
+                            <tr>
+                                <td style="border-bottom:1px solid #CCCCCC; text-align:left;">{{ survey_info["cust_#{c}_label"] }}:</td>
+                                <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">{{ respondent["cust#{c}"] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">Compensation:</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">${{ respondent.resp_compensation|number_format(0) }}</td>
+                    </tr>
+
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">Benefit %</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">{{ (respondent.resp_benfit_pct * 100)|number_format(2) }}%</td>
+                    </tr>
+
+                    <tr>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:left;">Total Compensation:</td>
+                        <td style="border-bottom:1px solid #CCCCCC; text-align:right; font-weight:bold;">${{ respondent.resp_total_compensation|number_format(0) }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endif %}
+        {{ indTable|raw }}
+
+        <script>
+            $(document).ready(function() {
+                $('#idSlctResp').on('change', function() {
+                    document.forms['frmInd'].submit();
+                });
+            });
+        </script>
+    </div>
+{% endblock %}

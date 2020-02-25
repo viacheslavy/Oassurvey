@@ -1,0 +1,247 @@
+#main-container {
+	margin-top:25px;
+}
+.container h4.title {
+	color:#5486ae;
+	padding-bottom:5px;
+	margin-bottom:20px;
+	border-bottom: 1px solid #DDD;
+}
+
+.italic {
+	font-style:italic;
+}
+.gray {
+	color:#666;
+}
+.redalert {
+	color:red;
+}
+.content {
+	padding:5px 0px;
+	border-bottom:1px dotted #DDD;
+}
+.tree-toggler {
+	position:relative;
+	cursor:pointer;
+	display:block;
+	padding:5px 0px;
+	border-bottom:1px solid #CCC;
+	border-left:1px solid #CCC;
+}
+label.oasnotree {
+	padding:5px 0px 5px 33px;
+	font-weight:bold;
+	display:block;
+	border-bottom:1px solid #CCC;
+	border-left:1px solid #CCC;
+}
+.tree-toggler:hover {
+	background-color:#CCD7EA;
+}
+.oasedit {
+	position:absolute;
+	right:0px;
+	top:0px;
+	padding:3px;
+	z-index:999;
+}
+.oascode {
+	color:#5486ae;
+	font-weight:bold;
+	padding-right:8px;
+}
+span.oastree {
+	display:inline-block;
+	padding: 0px 10px;
+	color:#5486ae;
+}
+label.oasnotree:hover {
+	background-color:#CCD7EA;
+}
+.liQ {margin-left:35px;}
+
+.questionBox {
+	border-top:3px solid #FFF;
+	border-bottom:2px solid #CCC;
+	padding: 10px 0px;
+	border-radius:7px;
+	margin-bottom:2px;
+}
+.visible_1 {
+	display:none !important;
+	visibility:hidden !important;
+}
+.visible_0 {
+	color:#C00;
+	padding:0px 10px;
+}
+#tblDetails tr {
+	font-size:12px;
+}
+.editButton {
+	padding:1px 4px;
+	color:#5486ae;
+	margin-right:3px;
+}
+#personScroll {
+	overflow-y: scroll; 
+	height:320px; 
+	margin-bottom:0px;
+	border:0px solid #CCC;
+}
+#tblRespondent th, #tblRespondent td {
+	font-size:12px !important;
+}
+.hidden-none {
+	visibility:hidden;
+	display:none;
+}
+.padding-thin {
+	padding:5px 10px;
+}
+
+.report-mainheader {
+	width:100%;
+	border: 0px solid;;
+	margin-bottom:20px;
+	display:table;
+}
+.report-survey-name {
+	font-size:16px;
+	font-weight:bold;
+	text-align:right;
+}
+.report-mainheader tr td {
+	display:table-cell;
+	padding:5px 0px;
+}
+.report-crumb {
+	float:left;
+	display:block;
+	margin: 5px 10px 0px 0px;
+}
+.acrumb, .acrumb:visited, .acrumb:active, .acrumb:link {
+	background-color:#D6E1F3;
+	color:#069;
+	text-decoration:none;
+	display:inline-block;
+	padding:0px 10px;
+	width:100%;
+	height:100%;
+	border: 1px solid #069;
+	border-radius:5px;
+}
+.acrumb:hover {
+	text-decoration:none;
+	background-color:#A7C6E4;
+	color:#23377C;
+}
+.report-header {
+	font-size:17px;
+	background:#337ab7;
+	color:#FFF;
+	padding:0px 8px;
+	margin-bottom:5px;
+}
+.report-table, .report-sub-table {
+	display:table;
+	width:100%;
+}
+.report-table tr:hover {
+	
+}
+.report-table tr td {
+	border-top:1px solid #CCC;
+	display:table-cell;
+	vertical-align:middle;
+	height:40px;
+	white-space:nowrap;
+}
+.report-sub-table tr td {
+	border-top:1px solid #CCC;
+	display:table-cell;
+	vertical-align:middle;
+	height:25px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size:11px !important;
+}
+.report-td-chart {
+	/*width:500px;*/
+	width:50%;
+}
+.report-div-container {
+	position:relative;
+	/*min-width:500px; */
+	min-width:200px;
+	height:40px;
+	border-left:1px solid #5d8b88;
+}
+.report-div-slice {
+	float:left;
+	width:20%; 
+	height:40px;
+	border-right:1px solid #AAA;
+}
+@-webkit-keyframes bargrowth{
+  0%   {max-width: 0%;}
+  100%  {max-width: 100%;}
+}
+@keyframes bargrowth{
+  0%   {max-width: 0%;}
+  100%  {max-width: 100%;}
+}
+.report-div-barchart {
+	position:absolute;
+	-webkit-animation: bargrowth 1000ms ease-in-out;
+	animation: bargrowth 1000ms ease-in-out;
+	top:5px;
+	left:0px;
+	height:30px;
+	background:#69aaa6;
+	border:2px solid #006e55;
+	border-left:none;
+	filter: alpha(opacity=40);
+	opacity:0.4;
+}
+.bartotal {
+	background:#006e55;
+	border:2px solid #006e55;
+	opacity:0.8;
+}
+.report-div-barchart:hover {
+	filter: alpha(opacity=60);
+	opacity:0.6;
+}
+.report-link, .report-link:visited, .report-link:active, .report-link:link {
+	text-decoration:none;
+	display:inline-block;
+	width:100%;
+	height:100%;
+}
+.report-td-calcs {
+	text-align:right;
+	width:50px;
+	padding-left:15px;
+}
+.sub-desc {
+	width:230px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.well {
+	margin-top: 20px;
+}
+
+.edit-buttons a {
+	font-size: 16px;
+	margin-right: 8px;
+}
+
+.permissions label {
+	margin-right: 15px;
+}

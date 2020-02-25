@@ -1,0 +1,333 @@
+{% extends "layout-account.html.twig" %}
+
+{% block content %}
+    <link rel="stylesheet" href="/css/jquery.floatingscroll.css">
+    <style rel="stylesheet">
+        @media print {
+            #crosstab-data th.head-slant .count {
+                position: relative;
+                left: 50%;
+                bottom: 5px;
+                font-weight: 700;
+                text-align: center;
+            }
+            #crosstab-data th.head-slant .box div {
+                border-bottom: none;
+                text-align: center;
+            }
+        }
+
+        #main-container {
+            /*width: 100% !important;*/
+            padding: 0 15px;
+        }
+        .table-overflow {
+            width: calc( 100% - 300px );
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-right: 100px;
+            margin-left: 300px;
+        }
+        .table-overflow table {
+            width: 99%;
+        }
+        #crosstab-data {
+            border-collapse: collapse;
+        }
+        #crosstab-data th.head-slant {
+            height: 180px;
+            white-space: nowrap;
+            position: relative;
+        }
+        #crosstab-data th.head-slant .box {
+            transform: translate(62px, -14px) rotate(315deg);
+            width: 75px;
+        }
+        #crosstab-data th.head-slant .box .title {
+            font-weight: 400;
+            border-bottom: 1px solid #ccc;
+            padding: 5px 10px;
+            width: 160px;
+            text-align: left;
+        }
+        #crosstab-data th.head-slant .count {
+            position: absolute;
+            left: 50%;
+            bottom: 5px;
+            font-weight: 700;
+        }
+        #crosstab-data td {
+            border: 1px solid #ccc;
+            padding: 5px 5px;
+        }
+        #crosstab-data .row-head {
+            position: absolute;
+            width: 300px;
+            left: 16px;
+            top: auto;
+        }
+        #crosstab-data .row-head .head-head {
+            height: 160px;
+            display: table-cell;
+            vertical-align: bottom;
+        }
+        #crosstab-data td.cell-integer {
+            text-align: right;
+            text-shadow: 1px 1px 5px #fff;
+            width: 75px;
+        }
+        .floatThead-container {
+            background: #fff;
+            padding-top: 0;
+        }
+        .floatThead-container #crosstab-data th.head-slant {
+            height: auto;
+        }
+        .floatThead-container #crosstab-data th.head-slant .rotate {
+            transform: none;
+            width: auto;
+        }
+        .floatThead-container #crosstab-data th.head-slant .rotate > span {
+            padding: 0;
+            border-bottom: none;
+        }
+        @media ( max-width: 767px ){
+            .table-overflow {
+                width: 100%;
+                margin-left: 0;
+            }
+            #crosstab-data .row-head {
+                position: relative;
+                width: auto;
+                left: auto;
+            }
+            #crosstab-data .row-head .head-head {
+                height: auto;
+                display: block;
+            }
+        }
+    </style>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-sm-3">
+                    <select class="form-control crosstab-select" data-param="branch" data-clear="group,category">
+                        <option value="">Select Branch</option>
+                        {% for branch in crosstabBranches %}
+                            <option value="{{ branch.question_id }}" {{ request.getParam('branch') == branch.question_id ? 'selected' }}>{{ branch.question_desc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control crosstab-select" data-param="group" data-clear="category">
+                        <option value="">Select Group</option>
+                        <option value="">All Groups</option>
+                        {% for group in crosstabGroups %}
+                            <option value="{{ group.question_id }}" {{ request.getParam('group') == group.question_id ? 'selected' }}>{{ group.question_desc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control crosstab-select" data-param="category">
+                        <option value="">Select Category</option>
+                        {% for category in crosstabCategories %}
+                            <option value="{{ category.question_id }}" {{ request.getParam('category') == category.question_id ? 'selected' }}>{{ category.question_desc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <select class="form-control crosstab-select" data-param="task">
+                        <option value="">Select Task</option>
+                        {% for task in crosstabTasks %}
+                            <option value="{{ task.question_id }}" {{ request.getParam('task') == task.question_id ? 'selected' }}>{{ task.question_desc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-6">
+                    <select class="form-control crosstab-select" data-param="total">
+                        <option value="cost" {{ request.getParam('total') == 'cost' ? 'selected' }}>Total Cost</option>
+                        <option value="hours" {{ request.getParam('total') == 'hours' ? 'selected' }}>Total Hours</option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <select class="form-control crosstab-select" data-param="by">
+                        <option value="group" {{ request.getParam('by') == 'group' ? 'selected' }}>By Group</option>
+                        <option value="department" {{ request.getParam('by') == 'department' ? 'selected' }}>By Department</option>
+                        <option value="title" {{ request.getParam('by') == 'title' ? 'selected' }}>By Title</option>
+                        <option value="category" {{ request.getParam('by') == 'category' ? 'selected' }}>By Category</option>
+                        <option value="office" {{ request.getParam('by') == 'office' ? 'selected' }}>By Office</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    {% if request.getParam('branch') %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="PDFout">
+                    {% if crosstabDatatable.body|length %}
+                        <div id="crosstab-chart" class="table-overflow">
+                            <table id="crosstab-data" class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="row-head">
+                                            <div class="head-head">
+                                                {{ crosstabTitle }}&nbsp;&nbsp;
+                                                <a class="btn btn-default btn-sm btn-export" href="{{ path_for('surveyCrosstabExcel', {surveyId: survey.survey_id}) }}?{{ request.queryParams|http_build_query }}">
+                                                    <i class='fa fa-circle-o-notch fa-spin'></i><span class="glyphicon glyphicon-export"></span> <span style="font-size: 10px !important;">Export XLS</span>
+                                                </a>
+                                                <a class="btn btn-default btn-sm btn-export" id="pdf">
+                                                    <i class='fa fa-circle-o-notch fa-spin'></i><span class="glyphicon glyphicon-export"></span> <span style="font-size: 10px !important;">Export PDF</span>
+                                                </a>
+                                            </div>
+                                        </th>
+                                        <th class="head-slant">
+                                            <div class="box">
+                                                <div class="title">Total</div>
+                                            </div>
+                                            <div class="count">
+                                                {% set totalParticipants = 0 %}
+                                                {% for val in crosstabDatatable.body %}
+                                                    {% if loop.first %}
+                                                        {% for rowVal in val.participants %}
+                                                            {% set totalParticipants = totalParticipants + rowVal %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {{ totalParticipants }}
+                                            </div>
+                                        </th>
+                                        {% for key, val in crosstabDatatable.body %}
+                                            {% if loop.first %}
+                                                {% for rowKey, rowVal in val.data %}
+                                                    <th class="head-slant">
+                                                        <div class="box">
+                                                            <div class="title">{{ rowKey }}</div>
+                                                        </div>
+                                                        <div class="count">{{ crosstabDatatable.body[key].participants[rowKey] }}</div>
+                                                    </th>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for key, val in crosstabDatatable.body %}
+                                        <tr>
+                                            <td class="row-head">{{ key }}</td>
+                                            {% if request.getParam('total', 'cost') == 'cost' %}
+                                                <td class="cell-integer">{{ (val.total / 1000)|round|number_format }}</td>
+                                            {% else %}
+                                                <td class="cell-integer">{{ (val.total_hours / 1000)|round|number_format }}</td>
+                                            {% endif %}
+                                            {% for row in val.data %}
+                                                {% if request.getParam('total', 'cost') == 'cost' %}
+                                                    {% set percentage = crosstab.calculatePercent(crosstabDatatable.head.scale.min, crosstabDatatable.head.scale.max, row.value) %}
+                                                    {% set color = crosstab.generateColor(percentage) %}
+                                                    {% set cost = row.value / 1000 %}
+                                                    <td data-percentage="{{ percentage }}" style="background-color: rgba({{ color }});" class="cell-integer">{{ cost|round|number_format }}</td>
+                                                {% else %}
+                                                    {% set percentage = crosstab.calculatePercent(crosstabDatatable.head.hour.min, crosstabDatatable.head.hour.max, row.hour) %}
+                                                    {% set color = crosstab.generateColor(percentage) %}
+                                                    {% set hour = row.hour / 1000 %}
+                                                    <td data-percentage="{{ percentage }}" style="background-color: rgba({{ color }});" class="cell-integer">{{ hour|round|number_format }}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <i>All figures shown in thousands. Cost shown in USD.</i>
+                        </div>
+                    {% else %}
+                        <div>Empty.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-xs-12">
+                <strong>Select a Branch first.</strong>
+            </div>
+        </div>
+    {% endif %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.0.3/jquery.floatThead.min.js" integrity="sha384-37rl8I2I5RjKQuk9RUD0O+REPnGEjxptsF5izWGiwDb+7cEluYx27tU3hqs6Pdrd" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/js/jquery.floatingscroll.min.js"></script>
+    <script type="text/javascript">
+
+        /*
+         * url param replacer
+         */
+        function replaceUrlParam(url, paramName, paramValue){
+            paramValue = encodeURIComponent( paramValue );
+            var pattern = new RegExp('(\\?|\\&)('+paramName+'=).*?(&|$)');
+            var newUrl=url;
+            if(url.search(pattern)>=0){
+                newUrl = url.replace(pattern,'$1$2' + paramValue + '$3');
+            } else {
+                newUrl = newUrl + (newUrl.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue;
+            }
+            return newUrl
+        }
+
+        /*
+         * bind onChange listener to search dropdowns
+         */
+        var crosstabSelect = document.getElementsByClassName('crosstab-select');
+        for (var i = 0; i < crosstabSelect.length; i++) {
+            crosstabSelect[ i ].addEventListener('change', function() {
+                var url = window.location.toString();
+                if (this.getAttribute('data-clear')) {
+                    var clear = this.getAttribute('data-clear').split(',');
+                    for (var c = 0; c < clear.length; c++ ) {
+                        url = replaceUrlParam (url, clear[c], '');
+                    }
+                }
+                window.location = replaceUrlParam(url, this.getAttribute( 'data-param' ), this.options[this.selectedIndex].value);
+            });
+        }
+
+        /*
+         *
+         */
+        //    var headSlantSpan = document.querySelectorAll( 'th.head-slant div span');
+        //    var headSlantMax = 1;
+        //    for( var i = 0; i < headSlantSpan.length; i++ ){
+        //        var size = headSlantSpan[ i ].getBoundingClientRect().height;
+        //        if( size > headSlantMax ){
+        //            headSlantMax = size;
+        //        }
+        //    }
+        //    for( var i = 0; i < headSlantSpan.length; i++ ){
+        //        headSlantSpan[ i ].parentElement.parentElement.style.height = parseInt( headSlantMax ) + 'px';
+        //    }
+
+        /*
+         * jquery plugins
+         */
+        $(".table-overflow").floatingScroll();
+        //    $('#crosstab-data').floatThead({
+        //        top: 0,
+        //        position: 'absolute'
+        //    });
+
+
+        $('.btn-export').on('click', function() {
+            var $this = $(this);
+            $this.button('loading');
+            setTimeout(function() {
+                $this.button('reset');
+            }, 3000);
+        });
+
+    </script>
+{% endblock %}

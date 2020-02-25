@@ -1,0 +1,138 @@
+{% extends "layout-account.html.twig" %}
+
+{% block content %}
+    <h4 class="title">{{ survey.survey_name }} Settings</h4>
+    <form method="post">
+        <div class="well" style="margin-top:20px;">
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Splash Page:</p>
+                    <label class="blue normal"><input type="checkbox" name="chkShowSplashPage" value="1" {{ settings.show_splash_page ? 'checked' : '' }}> Enable Spash Page</label>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="splashPage" class="form-control" name="txtSplashPage" style="height:150px !important;">{{ settings.splash_page }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Splash Page Logo:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <input id="logoSplash" name="txtLogoSplash" class="form-control" maxlength="500" placeholder="Enter URL of Logo" value="{{ settings.logo_splash }}" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Survey Pages Logo:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <input id="logoSurvey" name="txtLogoSurvey" class="form-control" maxlength="500" placeholder="Enter URL of Logo" value="{{ settings.logo_survey }}" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Contact E-mail:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <input id="contactEmail" name="txtContactEmail" class="form-control" maxlength="80" placeholder="Contact Email" value="{{ settings.contact_email }}" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Contact Phone:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <input id="contactPhone" name="txtContactPhone" class="form-control" maxlength="80" placeholder="Contact Phone" value="{{ settings.contact_phone }}" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Begin Page:</p>
+                    <label class="blue normal"><input type="checkbox" name="chkShowProgressBar" value="1" {{ settings.show_progress_bar ? 'checked' : '' }} "> Enable Progress Bar</label>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="beginPage" class="form-control" name="txtBeginPage" style="height:150px !important;">{{ settings.begin_page }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">End Page:</p>
+                    <label class="blue normal"><input type="checkbox" name="chkShowSummary" value="1" {{ settings.show_summary ? 'checked' : '' }}> Enable Print Summary</label>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="endPage" class="form-control" name="txtEndPage" style="height:150px !important;">{{ settings.end_page }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Footer:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="footer" class="form-control" name="txtFooter" style="height:150px !important;">{{ settings.footer }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Weekly Hours Prompt:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="weeklyHours" class="form-control" name="txtWeeklyHoursText" style="height:150px !important;">{{ settings.weekly_hours_text }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Annual Legal Hours Prompt:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="annualLegalHours" class="form-control" name="txtAnnualLegalHoursText" style="height:150px !important;">{{ settings.annual_legal_hours_text }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue strong">Copyright:</p>
+                </div>
+                <div class="col-sm-9">
+                    <div class="form-group">
+                        <textarea id="copyright" class="form-control" name="copyright" style="height:75px !important;">{{ settings.copyright }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 text-right">
+                    <input type="submit" name="btnSettings" class="btn btn-primary" value="Save Settings" />
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

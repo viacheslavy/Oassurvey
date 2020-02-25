@@ -1,0 +1,181 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+    <h4>Content Branching From: &nbsp;{{ page.question_desc }} ({{ page.question_code }})</h4>
+    <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#question-modal"><span class="glyphicon glyphicon-plus"></span> Add Item</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#edit-page-modal"><span class="glyphicon glyphicon-pencil"></span> Edit Page Text</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#delete-question-modal"><span class="glyphicon glyphicon-trash"></span> Delete Page</a>&nbsp;&nbsp;&nbsp;
+    <a class="btn btn-primary btn-sm" href="{{ path_for('surveyContent', {surveyId: survey.survey_id}) }}"><span class="glyphicon glyphicon-arrow-left"></span> Go Back</a>
+    <form method="post">
+    <div class="well" style="margin-top:20px;">
+        {% for question in questions %}
+        <div class="row questionBox">
+
+            <div class="col-lg-2">
+
+                <a title="Edit" class="btn btn-sm btn-default editButton" href="#" data-toggle="modal" data-target="#question-modal" data-id="{{ question.question_id }}" data-enabled="{{ question.question_enabled }}" data-code="{{ question.question_code }}" data-desc="{{ question.question_desc }}" data-extra="{{ question.question_extra }}" data-desc-alt="{{ question.question_desc_alt }}" data-extra-alt="{{ question.question_extra_alt }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                <a title="Delete" class="btn btn-sm btn-default editButton" href="#" data-toggle="modal" data-target="#delete-question-modal" data-id="{{ question.question_id }}" data-desc="{{ question.question_desc }}"><span class="glyphicon glyphicon-trash"></span></a>
+                &nbsp;
+                <button title="Move Up" type="submit" class="btn btn-sm btn-default editButton" name="btnQuestionUp" value="{{ question.question_id }}"><span class="glyphicon glyphicon-arrow-up"></span></button>
+                <button title="Move Down" type="submit" class="btn btn-sm btn-default editButton" name="btnQuestionDown" value="{{ question.question_id }}"><span class="glyphicon glyphicon-arrow-down"></span></button>
+                <span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question.question_enabled }}"></span>
+
+            </div>
+
+            <div class="col-lg-1">
+                <div>{{ question.question_code }}</div>
+            </div>
+
+            <div class="col-lg-3">
+                <div>{{ question.question_desc }}</div>
+            </div>
+
+            <div class="col-lg-6">
+                <div>{{ question.question_extra }}</div>
+            </div>
+
+            </div>
+        {% endfor %}
+        </div>
+    </form>
+{% endblock %}
+
+{% block outside_container %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'edit-page-modal'} %}
+        {% block title %}Edit Page{% endblock %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="pageDesc">Page Title:</label>
+                        <input id="pageDesc" name="txtPageDesc" class="form-control" maxlength="255" placeholder="Page Description" value="{{ page.page_desc }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pageExtra">Page Description:</label>
+                        <textarea id="pageExtra" class="form-control" name="txtPageExtra" style="height:200px !important;">{{ page.page_extra }}</textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" name="btnEditPage" value="Save Changes" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'delete-page-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-trash"></span> Delete {{ page.page_desc }}{% endblock %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+                    <p><span class="redalert strong">WARNING: </span> You are about to <strong>permanently delete all survey content that branches from {{ page.page_desc }}.</strong> Are you sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-danger" name="btnDeletePage" value="Permanently Delete" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'question-modal'} %}
+        {% block title %}{% if question %}<span class='glyphicon glyphicon-pencil'></span> Edit Item{% else %}Add New Item{% endif %}{% endblock %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="questionId" />
+
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="chkQuestionEnabled" value="1" {{ question.question_enabled ? 'checked' }}> <strong>Visible On Survey</strong></label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionCode">Item Code:</label>
+                        <input id="questionCode" name="txtQuestionCode" class="form-control" maxlength="40" placeholder="Item Code" value="{{ question.question_code }}" style="width:200px;" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionDesc">Item Name:</label>
+                        <input id="questionDesc" name="txtQuestionDesc" class="form-control" maxlength="1000" placeholder="Item Name" value="{{ question.question_desc }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionExtra">Item Description:</label>
+                        <input id="questionExtra" name="txtQuestionExtra" class="form-control" maxlength="1500" placeholder="Item Description" value="{{ question.questionExtra }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionDescAlt">Alternate Item Name (optional):</label>
+                        <input id="questionDescAlt" name="txtQuestionDescAlt" class="form-control" maxlength="1000" placeholder="Alternate Item Name (optional)" value="{{ question.question_desc_alt }}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questionExtraAlt">Alternate Item Description (optional):</label>
+                        <input id="questionExtraAlt" name="txtQuestionExtraAlt" class="form-control" maxlength="1500" placeholder="Alternate Item Description (optional)" value="{{ question.question_extra_alt }}" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" name="btnSaveItem" value="Save Edits" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'delete-question-modal'} %}
+        {% block title %}<span class='glyphicon glyphicon-trash'></span> Delete <span class="question-desc"></span>{% endblock %}
+        {% block content %}
+
+            <form method='post'>
+                <div class='modal-body'>
+                    <input type="hidden" name="questionId" />
+                    <p><span class='redalert strong'>WARNING: </span> You are about to <strong>permanently delete <span class="question-desc"></span></strong>. In addition, <strong>all survey content that branches from <span class="question-desc"></span> will be permanently deleted</strong>. Are you sure you wish to continue?</p>
+                </div>
+                <div class='modal-footer'>
+                    <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
+                    <input type='submit' class='btn btn-danger' name='btnDeleteItem' value='Permanently Delete' />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    <script>
+        $('#question-modal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+
+            var id = button.data('id');
+            var enabled = button.data('enabled');
+            var code = button.data('code');
+            var desc = button.data('desc');
+            var extra = button.data('extra');
+            var descAlt = button.data('desc-alt');
+            var extraAlt = button.data('extra-alt');
+
+            var modal = $(this);
+            modal.find('[name=questionId]').val(id);
+            modal.find('[name=chkQuestionEnabled]').prop('checked', enabled);
+            modal.find('[name=txtQuestionCode]').val(code);
+            modal.find('[name=txtQuestionDesc]').val(desc);
+            modal.find('[name=txtQuestionExtra]').val(extra);
+            modal.find('[name=txtQuestionDescAlt]').val(descAlt);
+            modal.find('[name=txtQuestionExtraAlt]').val(extraAlt);
+        });
+
+        $('#delete-question-modal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+
+            var id = button.data('id');
+            var desc = button.data('desc');
+
+            var modal = $(this);
+            modal.find('[name=questionId]').val(id);
+            modal.find('.question-desc').html(desc);
+        });
+    </script>
+
+{% endblock %}

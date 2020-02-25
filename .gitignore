@@ -1,0 +1,9 @@
+sftp-config.json
+.DS_store
+error_log
+/logs/*
+!/logs/README.md
+/.idea/
+iprules/
+webhook.php
+webhookPublic.log

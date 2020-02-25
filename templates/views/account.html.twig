@@ -1,0 +1,59 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+    <h4>My Account</h4>
+    <div class="well">
+        <form method="post"  autocomplete="off">
+            <p style="color:#AAA;">CONTACT INFO</p>
+            <div class="form-group">
+                <label for="accountFirstName">First Name:</label>
+                <input id="accountFirstName" name="firstName" class="form-control" maxlength="255" placeholder="First Name" value="{{ user.account_first_name }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="accountLastName">Last Name:</label>
+                <input id="accountLastName" name="lastName" class="form-control" maxlength="255" placeholder="Last Name" value="{{ user.account_last_name }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="accountEmailAddress">E-mail Address:</label>
+                <input id="accountEmailAddress" name="email" class="form-control" maxlength="255" placeholder="E-mail Address" value="{{ user.account_email_address }}" />
+            </div>
+            <br /><p style="color:#AAA;">SIGN IN CREDENTIALS</p>
+            <div class="form-group">
+                <label for="accountUsn">User Name / Login ID:</label>
+                <input id="accountUsn" name="username" class="form-control" maxlength="20" placeholder="User Name" value="{{ user.account_usn }}" />
+            </div>
+
+            <div class="form-group">
+                <label for="accountPwd">New Password:</label>
+                <input type="password" id="accountPwd" name="accountPassword" class="form-control" maxlength="20" placeholder="Leave blank to keep old password" />
+            </div>
+
+            <div class="form-group">
+                <label for="accountPwdRepeat">Repeat New Password:</label>
+                <input type="password" id="accountPwdRepeat" name="passwordRepeat" class="form-control" maxlength="20" placeholder="Repeat password above" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" name="btnSaveMyAccount" value="Save Changes" />
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block modal_title %}
+    {% if errors %}
+        My Account Errors
+    {% else %}
+        My Account Changes Made
+    {% endif %}
+{% endblock %}
+
+{% block modal_content %}
+{% spaceless %}
+    {% for alert in alerts %}
+        <li>{{ alert }}</li>
+    {% endfor %}
+{% endspaceless %}
+{% endblock %}

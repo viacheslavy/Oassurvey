@@ -1,0 +1,17 @@
+<?php
+include_once('fct/fctFunctions.php');
+include_once('fct/fctAccount.php');
+//include_once('class/clsHash.php');
+//include_once('class/clsSignin.php');
+//include_once('class/clsSession.php');
+//include_once('class/clsAccount.php');
+//include_once('class/clsTakesurvey.php');
+//include_once('class/clsReport.php');
+include_once('fct/fctAssessment.php');
+include_once('fct/fctContent.php');
+include_once('fct/fctRespondents.php');
+include_once('fct/fctSettings.php');
+include_once('fct/fctReports.php');
+include_once('fct/fctProfile.php');
+include_once('fct/fctIndividual.php');
+include_once('fct/fctUw.php');

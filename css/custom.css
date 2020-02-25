@@ -1,0 +1,101 @@
+body {
+	/*padding-top:50px;*/
+}
+a {
+   outline: 0;
+}
+.navbar {
+	/*
+	border-top: 2px solid #000;
+	border-bottom: 2px solid #000;
+	*/
+}
+.navbar-brand {
+    padding-top:10px !important; 
+	padding-bottom:0px !important;
+    height: 50px;
+}
+.modal-header {
+	background-color:#3177b3;
+    background: -webkit-linear-gradient(#3177b3 ,#265b8a); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#3177b3 ,#265b8a); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#3177b3 ,#265b8a); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#3177b3 ,#265b8a); /* Standard syntax (must be last) */
+	color:#FFF;
+}
+.panel-footer {
+	background-color:#444;
+	color:#FFF;
+	min-height:100px;
+}
+.white {
+	color:#FFFFFF;
+}
+.white2 {
+	 color:rgba(250,250,250,0.8);
+}
+.light {
+	color:rgba(0,0,0,0.6);
+	font-size:16px;
+	}
+.blue {
+	color:#5486ae;
+}
+.strong {
+	font-weight:bold;
+}
+.largetext {
+	font-size:20px;
+}
+.normal {
+	font-weight:normal;
+}
+.h1Header {
+	color:#93abba;
+	border-bottom:3px solid #DDD;
+	padding-bottom:15px;
+	margin-bottom:30px;
+}
+a.btn-cst1 {
+	border: 2px solid #FFF;
+	color: #FFF;
+	font-weight:bold;
+	font-size:18px;
+	padding:10px 25px;
+	border-radius:5px;
+	text-decoration:none;
+}
+a.btn-cst1:hover {
+	background-color: rgba(40,40,50,0.2);
+	text-decoration:none;
+}
+a.navphone {
+	color:#FFF;
+	text-decoration:none;
+	margin-right:20px;
+	font-size:14px;
+	padding-right:50px;
+	font-weight:normal;
+}
+a.navphone:hover, a.navphone:link, a.navphone:visited, a.navphone:active {
+	text-decoration:none;
+	color:#FFF;
+}
+ul.ulcontent {
+  padding-left: 0px;
+}
+li.licontent {
+    display: block;
+}
+
+li.licontent:before {
+    /*Using a Bootstrap glyphicon as the bullet point*/
+    content: "\e080";
+    font-family: 'Glyphicons Halflings';
+    font-size: 10px;
+    float: left;
+    margin-top: 4px;
+    margin-left: -17px;
+    color: #5486ae;
+}
+	

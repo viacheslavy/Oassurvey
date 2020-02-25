@@ -1,0 +1,220 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+    <h4 class="title"}>Users</h4>
+
+    <button class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#edit-user-modal"><span class="glyphicon glyphicon-user"></span> Add User</button>
+    &nbsp;
+    <a class="btn btn-default btn-sm btn-export" id="pdf">
+        <i class='fa fa-circle-o-notch fa-spin'></i><span class="glyphicon glyphicon-export"></span> <span style="font-size: 10px !important;">Export PDF</span>
+    </a>
+
+    <div id="PDFout">
+        <div class="well">
+            {% if users|length %}
+                <table class="table table-striped" id="users">
+                    <thead>
+                        <tr>
+                            <td>Edit</td>
+                            <td>Username</td>
+                            <td>Email</td>
+                            <td>Name</td>
+                            <td>Last Login</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td class="edit-buttons">
+                                <a href="#" title="Edit User" data-toggle="modal" data-target="#edit-user-modal"
+                                    data-account-id="{{ user.account_id }}"
+                                    data-account-first-name="{{ user.account_first_name }}"
+                                    data-account-last-name="{{ user.account_last_name }}"
+                                    data-account-email-address="{{ user.account_email_address }}"
+                                    data-account-usn="{{ user.account_usn }}"
+                                    data-survey-home="{{ user.hasPermissionWithValue('surveyHome', survey.survey_id) }}"
+                                    data-survey-users="{{ user.hasPermissionWithValue('surveyUsers', survey.survey_id) }}"
+                                    data-survey-content="{{ user.hasPermissionWithValue('surveyContent', survey.survey_id) }}"
+                                    data-survey-settings="{{ user.hasPermissionWithValue('surveySettings', survey.survey_id) }}"
+                                    data-survey-respondents="{{ user.hasPermissionWithValue('surveyRespondents', survey.survey_id) }}"
+                                    data-survey-invitations="{{ user.hasPermissionWithValue('surveyInvitations', survey.survey_id) }}"
+                                    data-survey-reports="{{ user.hasPermissionWithValue('surveyReports', survey.survey_id) }}"
+                                    data-survey-profile="{{ user.hasPermissionWithValue('surveyProfile', survey.survey_id) }}"
+                                    data-survey-report="{{ user.hasPermissionWithValue('surveyReport', survey.survey_id) }}"
+                                    data-survey-crosstab="{{ user.hasPermissionWithValue('surveyCrosstab', survey.survey_id) }}"
+                                    data-survey-individual="{{ user.hasPermissionWithValue('surveyIndividual', survey.survey_id) }}"
+                                >
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                                <a href="#" title="Delete User" data-toggle="modal" data-target="#delete-user-modal" data-account-id="{{ user.account_id }}"><span class="glyphicon glyphicon-trash"></span></a>
+                            </td>
+                            <td>{{ user.account_usn }}</td>
+                            <td>{{ user.account_email_address }}</td>
+                            <td>{{ user.account_last_name }}, {{ user.account_first_name }}</td>
+                            <td>{{ user.last_login }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>This survey has no users</p>
+            {% endif %}
+        </div>
+
+        {% embed 'partials/modal.html.twig' with {id: 'edit-user-modal'} %}
+            {% block title %}<span class="glyphicon glyphicon-user"></span> Edit User{% endblock %}
+            {% block content %}
+                <form method="post" action="{{ path_for('surveyUsers', {surveyId: survey.survey_id}) }}">
+                    <div class="modal-body">
+                        <div id="personScroll">
+                            <input type="hidden" name="account_id" value={this.state.user.account_id} />
+
+                            <div class="form-group">
+                                <label for="account_first_name">First Name</label>
+                                <input id="account-first-name" name="account_first_name" class="form-control txtbox" placeholder="First Name" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_last_name">Last Name</label>
+                                <input id="account-last-name" name="account_last_name" class="form-control txtbox" placeholder="Last Name" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_email_address">Email</label>
+                                <input id="account-email" name="account_email_address" class="form-control txtbox" placeholder="Email" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_usn">Username</label>
+                                <input id="account-username" name="account_usn" class="form-control txtbox" placeholder="Username" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="account_pwd">Password</label>
+                                <input type="password" id="account-password" name="account_pwd" class="form-control txtbox" placeholder="Password" />
+                            </div>
+
+                            <div class="form-group permissions">
+                                <div class="form-check form-check-inline">
+
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyHome]" id="surveyHome" /> Home
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyUsers]" id="surveyUsers" /> Users
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyContent]" id="surveyContent" /> Content
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveySettings]" id="surveySettings" /> Settings
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyRespondents]" id="surveyRespondents" /> Respondents
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyInvitations]" id="surveyInvitations" /> Invitations
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyReports]" id="surveyReports" /> Reports
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyProfile]" id="surveyProfile" /> Profile
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyReport]" id="surveyReport" /> Report
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyCrosstab]" id="surveyCrosstab" /> Crosstab
+                                    </label>
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="permissions[surveyIndividual]" id="surveyIndividual" /> Individual
+                                    </label>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <input type="submit" id="btnEditUser" class="btn btn-primary" name="btnEditUser" value="Save" />
+                    </div>
+                </form>
+            {% endblock %}
+        {% endembed %}
+        <script>
+            $('#edit-user-modal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var account_id = button.data('account-id');
+                var account_first_name = button.data('account-first-name');
+                var account_last_name = button.data('account-last-name');
+                var account_email_address = button.data('account-email-address');
+                var account_usn = button.data('account-usn');
+                var account_pwd = button.data('account-pwd');
+                var surveyHome = button.data('survey-home');
+                var surveyUsers = button.data('survey-users');
+                var surveyContent = button.data('survey-content');
+                var surveySettings = button.data('survey-settings');
+                var surveyRespondents = button.data('survey-respondents');
+                var surveyInvitations = button.data('survey-invitations');
+                var surveyReports = button.data('survey-reports');
+                var surveyProfile = button.data('survey-profile');
+                var surveyReport = button.data('survey-report');
+                var surveyCrosstab = button.data('survey-crosstab');
+                var surveyIndividual = button.data('survey-individual');
+
+                var modal = $(this);
+                modal.find('[name=account_id]').val(account_id);
+                modal.find('[name=account_first_name]').val(account_first_name);
+                modal.find('[name=account_last_name]').val(account_last_name);
+                modal.find('[name=account_email_address]').val(account_email_address);
+                modal.find('[name=account_usn]').val(account_usn);
+                modal.find('[name=account_pwd]').val(account_pwd);
+                modal.find('[id=surveyHome]').prop('checked', surveyHome);
+                modal.find('[id=surveyUsers]').prop('checked', surveyUsers);
+                modal.find('[id=surveyContent]').prop('checked', surveyContent);
+                modal.find('[id=surveySettings]').prop('checked', surveySettings);
+                modal.find('[id=surveyRespondents]').prop('checked', surveyRespondents);
+                modal.find('[id=surveyInvitations]').prop('checked', surveyInvitations);
+                modal.find('[id=surveyReports]').prop('checked', surveyReports);
+                modal.find('[id=surveyProfile]').prop('checked', surveyProfile);
+                modal.find('[id=surveyReport]').prop('checked', surveyReport);
+                modal.find('[id=surveyCrosstab]').prop('checked', surveyCrosstab);
+                modal.find('[id=surveyIndividual]').prop('checked', surveyIndividual);
+            });
+        </script>
+
+
+        {% embed 'partials/modal.html.twig' with {id: 'delete-user-modal'} %}
+            {% block title %}<span class='glyphicon glyphicon-user'></span>&nbsp; Confirm Delete <span class="name"></span>{% endblock %}
+            {% block content %}
+                <form method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="account_id" />
+
+                        <p class="surveyQuestion"><span style="color: red;"><strong>WARNING:</strong></span>
+                            This action will permanently delete user <strong class="name"></strong> from the survey. Are you sure you wish to continue?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <input type="submit" class="btn btn-danger" value="Permanently Delete" name="btnDeleteUser" />
+                    </div>
+                </form>
+            {% endblock %}
+        {% endembed %}
+        <script>
+            $('#delete-user-modal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var account_id = button.data('account-id');
+
+                var modal = $(this);
+                modal.find('[name=account_id]').val(account_id);
+            });
+        </script>
+    </div>
+{% endblock %}
+
+{% block outside_container %}
+{% endblock %}

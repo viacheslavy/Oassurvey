@@ -1,0 +1,68 @@
+{% set sum_salary = 0 %}
+{% set sum_hours = 0 %}
+{% for num, values in results %}
+    {% set sum_salary = sum_salary + values.salary %}
+    {% set sum_hours = sum_hours + values.hours %}
+{% endfor %}
+{% set sum_hourly = sum_hours > 0 ? sum_salary / sum_hours : 0 %}
+
+{% set curr_filters = request.getParam('filter') %}
+{% set curr_cust = request.getParam('cust') %}
+
+<div class="report-header blue strong">{{ title }}</div>
+<table class="report-table" style="margin-top:15px;">
+    <tr>
+        <td><div class="strong italic">Answering: {{ (results|first).count }}</div></td>
+        <td></td>
+        <td class="report-td-calcs blue strong">Pct</td>
+        <td class="report-td-calcs blue strong">Hours</td>
+        <td class="report-td-calcs blue strong">Cost to Firm</td>
+        <td class="report-td-calcs blue strong">Hourly</td>
+    </tr>
+    {% set sum_pct = 0 %}
+    {% for result in results %}
+        {% set pct = sum_salary > 0 ? result.salary / sum_salary : 0 %}
+        {% set hourly = result.hours > 0 ? result.salary / result.hours : 0 %}
+        {% set sum_pct = sum_pct + pct %}
+        <tr>
+            <td>
+                {% if result.page_id %}
+                    <a href="?pid={{ result.page_id }}&filter={{ curr_filters }}&cust={{ curr_cust }}">
+                {% endif %}
+                {{ result.question_desc }}
+                {% if result.page_id %}
+                    </a>
+                {% endif %}
+            </td>
+            <td class="report-td-chart">
+                <div class="report-div-container">
+                    <div class="report-div-slice">&nbsp</div>
+                    <div class="report-div-slice">&nbsp</div>
+                    <div class="report-div-slice">&nbsp</div>
+                    <div class="report-div-slice">&nbsp</div>
+                    <div class="report-div-slice">&nbsp</div>
+                    {% if pct > 0 %} {#only show bar if data present#}
+                        <div class="report-div-barchart" style="width:{{ (pct * 100)|number_format() }}%">
+                            {% if result.page_id %}
+                                <a class="report-link" href="?pid={{ result.page_id }}&filter={{ curr_filters }}&cust={{ curr_cust }}"></a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    </div>
+                </td>
+            <td class="report-td-calcs">{{ (pct * 100)|number_format(1) }}%</td>
+            <td class="report-td-calcs">{{ result.hours|number_format() }}</td>
+            <td class="report-td-calcs">${{ result.salary|number_format() }}</td>
+            <td class="report-td-calcs">${{ hourly|number_format() }}</td>
+            </tr>
+    {% endfor %}{#end question loop#}
+
+    <tr>
+        <td class="strong">TOTAL:</td>
+        <td></td>
+        <td class="report-td-calcs strong">{{ (sum_pct * 100)|number_format() }}%</td>
+        <td class="report-td-calcs strong">{{ sum_hours|number_format }}</td>
+        <td class="report-td-calcs strong">${{ sum_salary|number_format }}</td>
+        <td class="report-td-calcs strong">${{ sum_hourly|number_format }}</td>
+    </tr>
+</table>

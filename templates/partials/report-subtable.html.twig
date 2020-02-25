@@ -1,0 +1,91 @@
+{% set sum_salary = 0 %}
+{% set sum_hours = 0 %}
+{% for num, values in results %}
+    {% set sum_salary = sum_salary + values.salary %}
+    {% set sum_hours = sum_hours + values.hours %}
+{% endfor %}
+{% set sum_hourly = sum_hours > 0 ? sum_salary / sum_hours : 0 %}
+{#{% set sum_pct = sum_salary_total > 0 ? sum_salary / sum_salary_total : 0 %}#}
+{% set sum_pct = 0 %}
+
+{% set curr_filters = request.getParam('filter') %}
+{% set curr_cust = request.getParam('cust') %}
+
+{% if loop_number % 2 == 1 %} {#if odd starting with zero, then start new row. Allows two charts per row#}
+    <div class="row">
+{% endif %}
+
+    <div class="col-lg-6" style="margin-bottom:30px;">
+        <div class="report-header blue strong" style="font-size:12px;"><a class="white" href="?pid={{ page_id }}&filter={{ curr_filters }}&cust={{ curr_cust }}">{{ title }}</a></div>
+        <table class="report-sub-table" style="margin-top:15px;">
+            <tr>
+                <td><div class="strong italic">Answering: {{ (results|first).count }}</div></td>
+                <td></td>
+                <td class="report-td-calcs blue strong">Pct</td>
+                {#//<td class="report-td-calcs blue strong">Hours</td>#}
+                <td class="report-td-calcs blue strong">Cost</td>
+                {#//<td class="report-td-calcs blue strong">Hourly</td>#}
+            </tr>
+            {% if results|length > 1 %}
+                {% for result in results %}
+                    {% set pct = sum_salary_total > 0 ? result.salary / sum_salary_total %}
+                    {% set sum_pct = sum_pct + pct %}
+                    <tr>
+                        <td>
+                            <div class="sub-desc">
+                                {% if result.page_id %}
+                                <a href="?&pid={{ result.page_id }}&filter={{ curr_filters }}&cust={{ curr_cust }}">
+                                {% endif %}
+                                    {{ result.question_desc }}
+                                {% if result.page_id %}
+                                </a>
+                                {% endif %}
+                             </div>
+                        </td>
+                        <td class="report-td-chart">
+                            <div class="report-div-container" style="height:25px;">
+                                <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                                <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                                <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                                <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                                <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                                {% if pct > 0 %} {#only show bar if data present#}
+                                    <div class="report-div-barchart" style="width:{{ (pct * 100)|number_format }}%; height:16px;">
+                                        {% if result.page_id %}
+                                            <a class="report-link" href="?pid={{ result.page_id }}&filter={{ curr_filters }}&cust={{ curr_cust }}"></a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="report-td-calcs">{{ (pct * 100)|number_format(1) }}%</td>
+                        {#<td class="report-td-calcs">" . number_format($hours[$q]) . "</td>#}
+                        <td class="report-td-calcs">${{ result.salary|number_format }}</td>
+                        {#<td class="report-td-calcs">$" . number_format($hourly[$q]) . "</td>#}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            <tr>
+                <td class="strong">TOTAL:</td>
+                <td class="report-td-chart">
+                    <div class="report-div-container" style="height:25px;">
+                        <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                        <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                        <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                        <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                        <div class="report-div-slice" style="height:25px;">&nbsp;</div>
+                        {% if sum_pct > 0 %} {#only show bar if data present#}
+                            <div class="report-div-barchart bartotal" style="width:{{ (sum_pct * 100)|number_format }}%; height:16px;">&nbsp</div>
+                        {% endif %}
+                        </div>
+                    </td>
+                <td class="report-td-calcs strong">{{ (sum_pct * 100)|number_format }}%</td>
+                {#//<td class="report-td-calcs strong">" . number_format($sumHours) . "</td>#}
+                <td class="report-td-calcs strong">${{ sum_salary|number_format }}</td>
+                {#//<td class="report-td-calcs strong">$" . number_format($sumHourly) . "</td>#}
+                </tr>
+            </table>
+        </div><!--end column-->
+{% if loop_number % 2 == 0 %} {#if odd starting with zero, then start new row. Allows two charts per row. close row here#}
+    </div><!--end row-->
+{% endif %}

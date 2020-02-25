@@ -1,0 +1,381 @@
+{% extends "layout-account.html.twig" %}
+
+{% block content %}
+    <div id="PDFout">
+        <h4 class="title"}>{{ survey.survey_name }}:&nbsp;&nbsp;&nbsp;&nbsp;{{ respondents.count() }} Respondents&nbsp;&nbsp;&nbsp;{{ responded_count }} Responded&nbsp;&nbsp;&nbsp;{{ completed_count }} Completed</h4>
+        <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#respondent-modal"><span class="glyphicon glyphicon-user"></span> New Respondent</a>
+        &nbsp;
+        <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#upload-respondents-modal"><span class="glyphicon glyphicon-upload"></span> Upload Respondents</a>
+        &nbsp;
+        <a class="btn btn-primary btn-sm" href="{{ path_for('surveyRespondentsCSV', {surveyId: survey.survey_id}) }}?full=0" target="_blank"><span class="glyphicon glyphicon-download"></span> Download Respondents</a>
+        &nbsp;
+        <a class="btn btn-primary btn-sm" href="{{ path_for('surveyRespondentsCSV', {surveyId: survey.survey_id}) }}?full=1" target="_blank"><span class="glyphicon glyphicon-download"></span> Download All Data</a>
+        &nbsp;
+        <a class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#field-labels-modal"><span class="glyphicon glyphicon-tag"></span> Field Labels</a>
+        &nbsp;
+        <a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#reset-respondents-modal"><span class="glyphicon glyphicon-refresh"></span> Reset All</a>
+        &nbsp;
+        <a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#delete-respondents-modal"><span class="glyphicon glyphicon-trash"></span> Delete All</a>
+        &nbsp;
+{#
+        <a class="btn btn-primary btn-sm" id="pdf"><span class="glyphicon glyphicon-export"></span> <span style="font-size: 10px !important;"> Export PDF</span></a>
+#}
+
+        <div class="well" style="margin-top:20px;">
+            <table class="table table-striped" id="tblRespondent">
+                <thead>
+                    <tr>
+                        <th>Edit</th>
+                        <th>Access Code</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Last Update</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for respondent in respondents %}
+                        <tr>
+                            <td style="white-space: nowrap;">
+                                <a href="#" title="Edit Respondent" style="font-size:16px; margin-right:8px;" data-toggle="modal" data-target="#respondent-modal"
+                                   data-id="{{ respondent.resp_id }}"
+                                   data-access-code="{{ respondent.resp_access_code }}"
+                                   data-first="{{ respondent.resp_first }}"
+                                   data-last="{{ respondent.resp_last }}"
+                                   data-email="{{ respondent.resp_email }}"
+                                   data-alt="{{ respondent.resp_alt }}"
+                                   data-cust1="{{ respondent.cust_1 }}"
+                                   data-cust2="{{ respondent.cust_2 }}"
+                                   data-cust3="{{ respondent.cust_3 }}"
+                                   data-cust4="{{ respondent.cust_4 }}"
+                                   data-cust5="{{ respondent.cust_5 }}"
+                                   data-cust6="{{ respondent.cust_6 }}">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                                <a href="#" title="Reset Survey" style="font-size:16px; margin-right:8px;" data-toggle="modal" data-target="#reset-respondent-modal" data-id="{{ respondent.resp_id }}" data-name="{{ respondent.resp_first }} {{ respondent.resp_last }}"><span class="glyphicon glyphicon-refresh"></span></a>
+                                <a href="#" title="Delete Respondent" style="font-size:16px; margin-right:8px;" data-toggle="modal" data-target="#delete-respondent-modal" data-id="{{ respondent.resp_id }}" data-name="{{ respondent.resp_first }} {{ respondent.resp_last }}"><span class="glyphicon glyphicon-trash"></span></a>
+                                <a href="/oas/?sv={{ survey_hash }}&ac={{ respondent.resp_access_code }}" target="_blank" title="Survey URL" style="font-size:16px;"><span class="glyphicon glyphicon-link"></span></a>
+                            </td>
+                            <td>{{ respondent.resp_access_code }}</td>
+                            <td>{{ respondent.resp_last }}, {{ respondent.resp_first }}</td>
+                            <td>{{ respondent.resp_email }}</td>
+                            <td>{{ respondent.last_dt }}</td>
+                            <td align="right">
+                                {% if respondent.survey_completed %}
+                                    <span title="Respondent completed survey." style="color:green; font-size:18px;" class="glyphicon glyphicon-check"></span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block outside_container %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'respondent-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-user"></span>&nbsp; Edit Respondent{% endblock %}
+        {% block content %}
+            <form method="post" action="{{ path_for('surveyRespondents', {surveyId: survey.survey_id}) }}" id="respondent-form"}>
+                <div class="modal-body">
+                    <div id="personScroll">
+                        <input type="hidden" name="respondentId" />
+
+                        <div class="form-group resp-access-code-error">
+                            <label class="control-label" for="txtRespAccessCode">Access Code</label>
+                            <input id="txtRespAccessCode" name="txtRespAccessCode" class="form-control txtbox" maxlength="20" placeholder="Access Code" value="{{ respondent.resp_access_code }}" aria-describedby="acError" />
+                            <span id="resp-access-code-error" class="help-block" style="display: none;">This Access Code is assigned to another person. Please try another.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtRespFirst">First Name</label>
+                            <input id="txtRespFirst" name="txtRespFirst" class="form-control txtbox" maxlength="255" placeholder="First Name" value="{{ respondent.resp_first }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtRespLast">Last Name</label>
+                            <input id="txtRespLast" name="txtRespLast" class="form-control txtbox" maxlength="255" placeholder="Last Name" value="{{ respondent.resp_last }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtRespEmail">Email Address</label>
+                            <input id="txtRespEmail" name="txtRespEmail" class="form-control txtbox" maxlength="255" placeholder="Email Address" value="{{ respondent.resp_email }}" />
+                        </div>
+
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="chkRespAlt" value="1" {{ respondent.resp_alt == 1 ? 'checked' }}> <strong>Receives Alternate Text</strong></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCust1">{{ labels.cust_1_label }}</label>
+                            <input id="txtCust1" name="txtCust1" class="form-control txtbox" maxlength="255" placeholder="Custom 1" value="{{ respondent.cust_1 }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCust2">{{ labels.cust_2_label }}</label>
+                            <input id="txtCust2" name="txtCust2" class="form-control txtbox" maxlength="255" placeholder="Custom 2" value="{{ respondent.cust_2 }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCust3">{{ labels.cust_3_label }}</label>
+                            <input id="txtCust3" name="txtCust3" class="form-control txtbox" maxlength="255" placeholder="Custom 3" value="{{ respondent.cust_3 }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCust4">{{ labels.cust_4_label }}</label>
+                            <input id="txtCust4" name="txtCust4" class="form-control txtbox" maxlength="255" placeholder="Custom 4" value="{{ respondent.cust_4 }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCust5">{{ labels.cust_5_label }}</label>
+                            <input id="txtCust5" name="txtCust5" class="form-control txtbox" maxlength="255" placeholder="Custom 5" value="{{ respondent.cust_5 }}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="txtCust6">{{ labels.cust_6_label }}</label>
+                            <input id="txtCust6" name="txtCust6" class="form-control txtbox" maxlength="255" placeholder="Custom 6" value="{{ respondent.cust_6 }}" />
+                        </div>
+
+
+                    </div><!--end modal body -->
+                </div><!--end scrolling div -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnNewResp" class="btn btn-primary" name="btnEditRespondent" value="Save Changes" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+    <script>
+        $(function() {
+            $('#respondent-form').ajaxForm({
+                dataType: 'json',
+                success: function(data, status, xhr, el) {
+                    if (data.status === 'success') {
+                        window.location.replace(data.url);
+                    } else {
+                        processErrors($('#respondent-form'), data.errors);
+                    }
+                },
+            });
+        });
+
+        $('#respondent-modal').on('show.bs.modal', function(event) {
+            $target = $(event.target);
+            $target.find('.has-error').removeClass('has-error');
+            $target.find('[id*=error]').css('display', 'none');
+            $accessCode = $target.find('#txtRespAccessCode');
+            $accessCode.val('');
+
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var accessCode = button.data('access-code');
+            var first = button.data('first');
+            var last = button.data('last');
+            var email = button.data('email');
+            var alt = button.data('alt');
+            var cust1 = button.data('cust1');
+            var cust2 = button.data('cust2');
+            var cust3 = button.data('cust3');
+            var cust4 = button.data('cust4');
+            var cust5 = button.data('cust5');
+            var cust6 = button.data('cust6');
+
+            var modal = $(this);
+            modal.find('[name=respondentId]').val(id);
+            modal.find('[name=txtRespAccessCode]').val(accessCode);
+            modal.find('[name=txtRespFirst]').val(first);
+            modal.find('[name=txtRespLast]').val(last);
+            modal.find('[name=txtRespEmail]').val(email);
+            modal.find('[name=chkRespAlt]').prop('checked', alt);
+            modal.find('[name=txtCust1]').val(cust1);
+            modal.find('[name=txtCust2]').val(cust2);
+            modal.find('[name=txtCust3]').val(cust3);
+            modal.find('[name=txtCust4]').val(cust4);
+            modal.find('[name=txtCust5]').val(cust5);
+            modal.find('[name=txtCust6]').val(cust6);
+
+            // generate access code if has no respondentId
+            if ($accessCode.val() === '') {
+                $.ajax('{{ path_for('surveyRespondentsGenerateAccessCode', {surveyId: survey.survey_id}) }}')
+                    .success(function(data) {
+                        $accessCode.val(data.code)
+                    });
+            }
+        });
+    </script>
+
+
+    {% embed 'partials/modal.html.twig' with {id: 'delete-respondent-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-user"></span>&nbsp; Confirm Delete <span class="name"></span>{% endblock %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="respondentId" />
+                    <p class="surveyQuestion"><span style="color:red;"><strong>WARNING:</strong></span> This action will permanently delete respondent <strong> <span class="name"></span> </strong> from the survey, and will <strong>permanently delete any survey data</strong> <span class="name"></span> provided. Are you sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnNewResp" class="btn btn-danger" name="btnDeleteRespondent" value="Permanently Delete" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+    <script>
+        $('#delete-respondent-modal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var name = button.data('name');
+
+            var modal = $(this);
+            modal.find('[name=respondentId]').val(id);
+            modal.find('.name').html(name);
+        })
+    </script>
+
+    {% embed 'partials/modal.html.twig' with {id: 'field-labels-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-tag"></span> Customize Field Labels{% endblock %}
+        {% block content %}
+            {% set custs = account.get_field_labels(survey.survey_id) %}
+
+            <form method="post">
+                <div class="modal-body">
+                    <p>Customize up to 6 respondent field labels in the textboxes below:</p>
+                    <table style="width:100%;">
+                        <tr>
+                            <td>Custom 1:</td>
+                            <td>
+                                <div class="form-group"><input required id="txtCust1" name="txtCust1" class="form-control txtbox" maxlength="120" placeholder="Custom 1" value="{{ custs.cust_1_label }}" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Custom 2:</td>
+                            <td>
+                                <div class="form-group"><input required id="txtCust2" name="txtCust2" class="form-control txtbox" maxlength="120" placeholder="Custom 2" value="{{ custs.cust_2_label }}" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Custom 3:</td>
+                            <td>
+                                <div class="form-group"><input required id="txtCust3" name="txtCust3" class="form-control txtbox" maxlength="120" placeholder="Custom 3" value="{{ custs.cust_3_label }}" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Custom 4:</td>
+                            <td>
+                                <div class="form-group"><input required id="txtCust4" name="txtCust4" class="form-control txtbox" maxlength="120" placeholder="Custom 4" value="{{ custs.cust_4_label }}" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Custom 5:</td>
+                            <td>
+                                <div class="form-group"><input required id="txtCust5" name="txtCust5" class="form-control txtbox" maxlength="120" placeholder="Custom 5" value="{{ custs.cust_5_label }}" /></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Custom 6:</td>
+                            <td>
+                                <div class="form-group"><input required id="txtCust6" name="txtCust6" class="form-control txtbox" maxlength="120" placeholder="Custom 6" value="{{ custs.cust_6_label }}" /></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div><!-- end modal body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnNewResp" class="btn btn-primary" name="btnSaveLabels" value="Save Labels" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+
+    {% embed 'partials/modal.html.twig' with {id: 'upload-respondents-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-upload"></span>&nbsp; Upload CSV Respondent List{% endblock %}
+        {% block content %}
+            <div class="modal-body">
+
+                <p>In this area you can upload an entire list of respondents at once. Click the <strong>Browse</strong> button below to search for the CSV (Comma Separated Values) file on your computer.</p><p>Click the <strong>Check For Errors</strong> button before uploading your file. This will help identify any issues in your file before uploading the entire list.</p>
+
+                <p>Need a CSV file? <a href="/downloads/respondent-template.csv" target="_blank">Click here to download</a> and fill in the template. Once filled in, save the CSV file to your computer and continue with the upload process.</p>
+
+            </div>
+            <div class="modal-footer">
+                <form method="post" enctype="multipart/form-data" action="{{ path_for('surveyRespondentsUpload', {surveyId: survey.survey_id}) }}">
+                    <input class="btn btn-default" type="file" name="csv" value=""" accept=".csv, .CSV" />
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnUploadResp" class="btn btn-warning" name="btnUploadCSV" value="Check For Errors" />
+                    <input type="submit" id="btnUploadResp" class="btn btn-primary" name="btnUploadCSV" value="Upload" />
+                </form>
+            </div>
+            <div class="modal-body result"></div>
+        {% endblock %}
+    {% endembed %}
+
+    <script>
+        $(function() {
+            $('#upload-respondents-modal form').ajaxForm({
+                target: '#upload-respondents-modal .result',
+            });
+        });
+    </script>
+
+    {% embed 'partials/modal.html.twig' with {id: 'reset-respondents-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-refresh"></span>&nbsp; Confirm Reset All Respondents{% endblock %}
+        {% block content %}
+            <form method="post" action="{{ path_for('surveyRespondentsResetAll', {surveyId: survey.survey_id}) }}">
+                <div class="modal-body">
+                    <p class="surveyQuestion"><span style="color:red;"><strong>WARNING:</strong></span> This action will reset all respondents and <strong>PERMANENTLY DELETE ALL SURVEY DATA</strong> from this survey. Are you sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnNewResp" class="btn btn-warning" name="btnDeleteAll" value="Reset All Respondents" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'delete-respondents-modal'} %}
+        {% block title %}<span class="glyphicon glyphicon-trash"></span>&nbsp; Confirm Delete All Respondents{% endblock %}
+        {% block content %}
+            <form method="post" action="{{ path_for('surveyRespondentsDeleteAll', {surveyId: survey.survey_id}) }}">
+                <div class="modal-body">
+                    <p class="surveyQuestion"><span style="color:red;"><strong>WARNING:</strong></span> This action will <strong>PERMANENTLY DELETE ALL RESPONDENTS</strong> along with <strong>ALL SURVEY DATA</strong> from the survey. Are you sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnNewResp" class="btn btn-danger" name="btnDeleteAll" value="Permanently Delete" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'partials/modal.html.twig' with {id: 'reset-respondent-modal'} %}
+        {% block title %}<span class='glyphicon glyphicon-user'></span>&nbsp; Confirm Reset Survey{% endblock %}
+        {% block content %}
+            <form method="post">
+                <input type="hidden" name="respondentId" />
+                <div class="modal-body">
+                    <p class="surveyQuestion"><span style="color:red;"><strong>Caution:</strong></span> This action will permanently delete the survey data of <strong class="name"></strong> Are you sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" id="btnNewResp" class="btn btn-warning" name="btnResetRespondent" value="Reset Survey" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+    <script>
+        $('#reset-respondent-modal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var name = button.data('name');
+
+            var modal = $(this);
+            modal.find('[name=respondentId]').val(id);
+            modal.find('.name').html(name);
+        });
+    </script>
+
+{% endblock %}

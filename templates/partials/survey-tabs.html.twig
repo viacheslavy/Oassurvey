@@ -1,0 +1,63 @@
+<ul class="nav nav-tabs">
+    {% if user.hasPermissionWithValue('surveyHome', survey.survey_id) %}
+        <li class="nav-item {{ 'home' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyHome', {surveyId: survey.survey_id}) }}">Home</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyUsers', survey.survey_id) %}
+        <li class="nav-item {{ 'users' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyUsers', {surveyId: survey.survey_id}) }}">Users</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyContent', survey.survey_id) %}
+        <li class="nav-item {{ ('content' in current_uri.path or 'page' in current_uri.path) ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyContent', {surveyId: survey.survey_id}) }}">Content</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveySettings', survey.survey_id) %}
+        <li class="nav-item {{ 'settings' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveySettings', {surveyId: survey.survey_id}) }}">Settings</a>
+        </li>
+    {% endif %}
+    <!--
+    <li class="nav-item<? //echo $tab[4]; ?>">
+      <a class="nav-link" href="#">Appearance</a>
+    </li>
+    -->
+    {% if user.hasPermissionWithValue('surveyRespondents', survey.survey_id) %}
+        <li class="nav-item {{ 'respondents' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyRespondents', {surveyId: survey.survey_id}) }}">Respondents</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyInvitations', survey.survey_id) %}
+        <li class="nav-item {{ 'invitations' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="#">Invitations</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyReports', survey.survey_id) %}
+        <li class="nav-item {{ 'reports' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyReports', {surveyId: survey.survey_id}) }}">X</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyProfile', survey.survey_id) %}
+        <li class="nav-item {{ 'profile' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyProfile', {surveyId: survey.survey_id}) }}">Profile</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyReport', survey.survey_id) %}
+        <li class="nav-item {{ 'report' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyReport', {surveyId: survey.survey_id}) }}">Report</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyCrosstab', survey.survey_id) %}
+        <li class="nav-item {{ 'crosstab' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyCrosstab', {surveyId: survey.survey_id}) }}">Crosstab</a>
+        </li>
+    {% endif %}
+    {% if user.hasPermissionWithValue('surveyIndividual', survey.survey_id) %}
+        <li class="nav-item {{  'individual' in current_uri.path ? 'active' }}">
+            <a class="nav-link" href="{{ path_for('surveyIndividual', {surveyId: survey.survey_id}) }}">Individual</a>
+        </li>
+    {% endif %}
+</ul>
+<div class="spacer">&nbsp;</div>

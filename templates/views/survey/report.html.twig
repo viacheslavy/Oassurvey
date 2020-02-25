@@ -1,0 +1,187 @@
+{% extends "layout-account.html.twig" %}
+
+{% block content %}
+    {% set current_page = pages|last %}
+    {% set sum_salary_total = results|array_column('salary')|array_sum %}
+    {% set has_branches = results|array_column('page_id')|array_sum %}
+
+    <table class="report-mainheader">
+        <tr>
+            <td>
+                <img src="{{ survey_info.logo_survey }}" width="130" />
+            </td>
+            <td>
+                <div class="report-survey-name">{{ survey_info.survey_name }}</div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <div class="report-survey-name" style="font-size:14px; font-weight:normal;"># Responding: {{ survey_info.resp_ct }}</div>
+            </td>
+        </tr>
+    </table>
+
+
+    {% set saveCust1 = request.getParam('cust1') %}
+    {% set saveCust2 = request.getParam('cust2') %}
+    {% set saveCust3 = request.getParam('cust3') %}
+    {% set saveCust4 = request.getParam('cust4') %}
+    {% set saveCust5 = request.getParam('cust5') %}
+    {% set saveCust6 = request.getParam('cust6') %}
+
+    {#{{ query_result }}#}
+    {#$url = $_SERVER['PHP_SELF'] . '?' . $query_result;#}
+
+    <br><br>
+
+    {#TODO: reset all filters button javascript#}
+    {#TODO: tell Bill that this is done but you'd like to start work on a javascript/ajax version only#}
+    {#TODO: apply CSS from Bill's demo#}
+
+    <!-- Begin Filter Options -->
+    <div class="row">
+      <div class="col-sm-12">
+          <!--<span class="btn btn-link strong" id="show-filters">+ Show Report Filter Options</span><br /><br />-->
+          </div>
+    </div> <!-- End Row -->
+    <div id="filter-panel">
+      <div class="row form-inline">
+          <a class="btn btn-primary btn-sm" id="pdf"><span class="glyphicon glyphicon-export"></span> <span style="font-size: 10px !important;"> Export PDF</span></a>
+
+          <div class="well">
+                <p class="blue" style="font-size:18px; font-weight:300;">I want to see how the following personnel are utilized:</p>
+            <select style="width: 16%;" id="ddFilter1" class="form-control" name="ddFilter">
+                <option value=""> - BY EMPLOYEE ID - </option>
+                <option value="">None</option>
+                {% for filter in employee_filters %}
+                    {% if filter.filter %}
+                        {% set test = "#{filter.type}=\"#{filter.filter}\"" %}
+                        {% set url_filter = test|urlencode() %}
+                        <option {{ test == request.getParam('cust1') ? 'selected' }} value="&cust1={{ url_filter }}">{{ filter.filter }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>&nbsp;
+            <select style="width: 16%;" id="ddFilter2" class="form-control" name="ddFilter">
+                <option value=""> - BY GROUP - </option>
+                <option value="">None</option>
+                {% for filter in group_filters %}
+                    {% if filter.filter %}
+                        {% set test = "#{filter.type}=\"#{filter.filter}\"" %}
+                        {% set url_filter = test|urlencode() %}
+                        <option {{ test == request.getParam('cust2') ? 'selected' }} value="&cust2={{ url_filter }}">{{ filter.filter }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>&nbsp;
+            <select style="width: 16%;" id="ddFilter3" class="form-control" name="ddFilter">
+                <option value=""> - BY TITLE - </option>
+                <option value="">None</option>
+                {% for filter in title_filters %}
+                    {% if filter.filter %}
+                        {% set test = "#{filter.type}=\"#{filter.filter}\"" %}
+                        {% set url_filter = test|urlencode() %}
+                        <option {{ test == request.getParam('cust3') ? 'selected' }} value="&cust3={{ url_filter }}">{{ filter.filter }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>&nbsp;
+            <select style="width: 16%;" id="ddFilter4" class="form-control" name="ddFilter">
+                <option value=""> - BY DEPARTMENT - </option>
+                <option value="">None</option>
+                {% for filter in department_filters %}
+                    {% if filter.filter %}
+                        {% set test = "#{filter.type}=\"#{filter.filter}\"" %}
+                        {% set url_filter = test|urlencode() %}
+                        <option {{ test == request.getParam('cust4') ? 'selected' }} value="&cust4={{ url_filter }}">{{ filter.filter }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>&nbsp;
+            <select style="width: 16%;" id="ddFilter5" class="form-control" name="ddFilter">
+                <option value=""> - BY CATEGORY - </option>
+                <option value="">None</option>
+                {% for filter in category_filters %}
+                    {% if filter.filter %}
+                        {% set test = "#{filter.type}=\"#{filter.filter}\"" %}
+                        {% set url_filter = test|urlencode() %}
+                        <option {{ test == request.getParam('cust5') ? 'selected' }} value="&cust5={{ url_filter }}">{{ filter.filter }}</option>
+                    {% endif %}
+                {% endfor %}
+                </select>&nbsp;
+            <select style="width: 16%;" id="ddFilter6" class="form-control" name="ddFilter">
+                <option value=""> - BY CITY - </option>
+                <option value="">None</option>
+                {% for filter in city_filters %}
+                    {% if filter.filter %}
+                        {% set test = "#{filter.type}=\"#{filter.filter}\"" %}
+                        {% set url_filter = test|urlencode() %}
+                        <option {{ test == request.getParam('cust6') ? 'selected' }} value="&cust6={{ url_filter }}">{{ filter.filter }}</option>
+                    {% endif %}
+                {% endfor %}
+                </select>
+                <div style="margin:10px 5px 0px 0px;">
+                    <a id="filter-reset" class='btn btn-link strong'>Reset All Filters</a>
+                    <!--<span id='filter-close' class='btn btn-link strong' style='padding-left:15px;'>Done</span>-->
+                    </div>
+                </div>
+          </div>
+    </div> <!-- End Filter Panel -->
+    <div class="spacer">&nbsp;</div>
+    <!-- End Filter Options -->
+
+    <div id="crumbcontainer">
+        <span class="report-crumb">
+            <a class="acrumb" href="?pid={{ hoursPageID }}&filter={{ currFilters }}&cust={{ request.getParam('cust') }}">{{ hours_title }}</a>
+        </span>
+        {% for page in pages %}
+            {% set curr_filters = request.getParam('filter') %}
+            {% set curr_cust = request.getParam('cust') %}
+            <div class="report-crumb"><img src="/images/arrow-right.png" width="25" /></div>
+            <div class="report-crumb"><a  class="acrumb" href="?pid={{ page.page_id }}&filter={{ curr_filters }}&cust={{ curr_cust }}">{{ page.question_desc }}</a></div>
+        {% endfor %}
+    </div>
+    <div style="clear:both; margin-bottom:15px;"></div>
+    <div id="PDFout">
+
+        {% embed 'partials/report-table.html.twig' with {title: title, results: results} %}{% endembed %}
+        
+        {% for result in results if has_branches %} {#get sub page results to display under main page#}
+            {#get page_id where question_id is the question_id_parent#}
+            {% set result = result|merge({page_id: account.parent_page_id(result.question_id)}) %}
+
+            {% if result.page_id %}
+                {% set subresult = account.calcs(survey.survey_id, result.page_id, null, group, filters) %}
+            {% else %}
+                {#if there are no sub pages for question, then just repeat the overall info for the distribution table#}
+                {% set subresult = [result] %}
+            {% endif %}
+
+            {% if subresult|array_column('salary')|array_sum %} {#only show distribution if there is salary on the page#}
+                {% if loop.first %}
+                    <div style="font-size:20px; color:#999; margin:10px 0px; padding-top:20px; border-top:1px solid #DDD; font-style:italic; font-weight:300;">
+                        Cost Distribution of {{ title }} (${{ sum_salary_total|number_format }}):
+                    </div>
+                {% endif %}
+
+                {% embed 'partials/report-subtable.html.twig' with {results: subresult, title: result.question_desc, page_id: result.page_id, loop_number: loop.index, sum_salary_total: sum_salary_total} %}{% endembed %}
+            {% endif %}
+        {% endfor %}
+
+        <script>
+            $(function() {
+                var pageAttribute = '{{ current_page ? "pid=#{current_page.page_id}" : '' }}';
+
+                var url = '{{ path_for('surveyReport', {surveyId: survey.survey_id}) }}?' + pageAttribute;
+
+                $('#ddFilter1, #ddFilter2, #ddFilter3, #ddFilter4, #ddFilter5, #ddFilter6').change(function(e) {
+                    var cust = $('#ddFilter1').val() + $('#ddFilter2').val() + $('#ddFilter3').val() + $('#ddFilter4').val() + $('#ddFilter5').val() + $('#ddFilter6').val();
+
+                    window.location = url + cust;
+                });
+
+                $('#filter-reset').click(function(e) {
+                    e.preventDefault();
+                    window.location = url;
+                });
+            });
+        </script>
+    </div>
+{% endblock %}

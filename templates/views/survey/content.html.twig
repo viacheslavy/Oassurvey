@@ -1,0 +1,172 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+    <h4 class="title">Content Of {{ survey.survey_name }}</h4>
+    <a id="add-first" class="btn btn-primary btn-sm" href="#" data-toggle="modal" data-target="#add-page-modal" data-question-id="0" data-question-desc="New Branch"><span class="glyphicon glyphicon-plus"></span> Add First Level Branch</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="btn btn-default btn-sm" id="rollup">Collapse All</span>
+    <span class="btn btn-default btn-sm" id="rolldown">Expand All</span>
+    <a class="btn btn-default btn-sm" href="{{ path_for('surveyContentDetailed', {surveyId: survey.survey_id}) }}"><span class="glyphicon glyphicon-export"></span> Detailed</a>
+    <div class="well" style="margin-top:20px;">
+        <ul class="nav nav-list">
+            {# LEVEL ONE ####################################################################################################### #}
+            {% set pages1 = pages|wherePropertyEquals('question_id_parent', 0) %}
+            {% for page1 in pages1 %}
+                <li>
+                    {#Show Page Name on Branch level#}
+                    <label class="tree-toggler"><span class="oastree glyphicon glyphicon-chevron-down"></span>{{ page1.page_desc }}<div class="oasedit"><a title="Edit" class="btn btn-success btn-xs" href="{{ path_for('surveyPage', {surveyId: survey.survey_id, pageId: page1.page_id}) }}"><span class="glyphicon glyphicon-pencil"></span> Edit</a></div></label>
+                    <ul class="nav nav-list tree">
+                        {% set questions1 = questions|wherePropertyEquals('page_id', page1.page_id) %}
+                        {% for question1 in questions1 %}
+                            {% set pages2 = pages|wherePropertyEquals('question_id_parent', question1.question_id) %}
+                            {#START LEVEL 2#}
+                            {#if children are to follow, start new tree level#}
+                            {% if pages2|length == 0 %}
+                                <li class="liQ"><label class="oasnotree"><span class="oascode">{{ question1.question_code }}</span>{{ question1.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question1.question_enabled }}"></span><a title="New Branch From This Item" class="btn btn-primary btn-xs" href="#" data-toggle="modal" data-target="#add-page-modal" data-question-id="{{ question1.question_id }}" data-question-desc="{{ question1.question_desc }}"><span class="glyphicon glyphicon-plus"></span> Add</a></div></label></li>
+                            {% endif %}
+                            {% for page2 in pages2 %}
+                                <li class="liQ"><label class="tree-toggler"><span class="oastree glyphicon glyphicon-chevron-down"></span><span class="oascode">{{ question1.question_code }}</span>{{ question1.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question1.question_enabled }}"></span><a title="Edit" class="btn btn-success btn-xs" href="{{ path_for('surveyPage', {surveyId: survey.survey_id, pageId: page2.page_id}) }}"><span class="glyphicon glyphicon-pencil"></span> Edit</a></div></label>
+                                    <ul class="nav nav-list tree">
+                                        {% set questions2 = questions|wherePropertyEquals('page_id', page2.page_id) %}
+                                        {% for question2 in questions2 %}
+                                            {% set pages3 = pages|wherePropertyEquals('question_id_parent', question2.question_id) %}
+                                            {#START LEVEL 3#}
+                                            {#if children are to follow, start new tree level#}
+                                            {% if pages3|length == 0 %}
+                                                <li class="liQ"><label class="oasnotree"><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}</span>{{ question2.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question2.question_enabled }}"></span><a title="New Branch From This Item" class="btn btn-primary btn-xs" href="#" data-toggle="modal" data-target="#add-page-modal" data-question-id="{{ question2.question_id }}" data-question-desc="{{ question2.question_desc }}"><span class="glyphicon glyphicon-plus"></span> Add</a></div></label></li>
+                                            {% endif %}
+                                            {% for page3 in pages3 %}
+                                                <li class="liQ"><label class="tree-toggler"><span class="oastree glyphicon glyphicon-chevron-down"></span><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}</span>{{ question2.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question2.question_enabled }}"></span><a title="Edit" class="btn btn-success btn-xs" href="{{ path_for('surveyPage', {surveyId: survey.survey_id, pageId: page3.page_id}) }}"><span class="glyphicon glyphicon-pencil"></span> Edit</a></div></label>
+                                                    <ul class="nav nav-list tree">
+                                                        {% set questions3 = questions|wherePropertyEquals('page_id', page3.page_id) %}
+                                                        {% for question3 in questions3 %}
+                                                            {% set pages4 = pages|wherePropertyEquals('question_id_parent', question3.question_id) %}
+                                                            {#START LEVEL 4#}
+                                                            {#if children are to follow, start new tree level#}
+                                                            {% if pages4|length == 0 %}
+                                                                <li class="liQ"><label class="oasnotree"><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}</span>{{ question3.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question3.question_enabled }}"></span><a title="New Branch From This Item" class="btn btn-primary btn-xs" href="#" data-toggle="modal" data-target="#add-page-modal" data-question-id="{{ question3.question_id }}" data-question-desc="{{ question3.question_desc }}"><span class="glyphicon glyphicon-plus"></span> Add</a></div></label></li>
+                                                            {% endif %}
+                                                            {% for page4 in pages4 %}
+                                                                <li class="liQ"><label class="tree-toggler"><span class="oastree glyphicon glyphicon-chevron-down"></span><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}</span>{{ question3.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question3.question_enabled }}"></span><a title="Edit" class="btn btn-success btn-xs" href="{{ path_for('surveyPage', {surveyId: survey.survey_id, pageId: page4.page_id}) }}"><span class="glyphicon glyphicon-pencil"></span> Edit</a></div></label>
+                                                                    <ul class="nav nav-list tree">
+                                                                        {% set questions4 = questions|wherePropertyEquals('page_id', page4.page_id) %}
+                                                                        {% for question4 in questions4 %}
+                                                                            {% set pages5 = pages|wherePropertyEquals('question_id_parent', question4.question_id) %}
+                                                                            {#START LEVEL 5#}
+                                                                            {#if children are to follow, start new tree level#}
+                                                                            {% if pages5|length == 0 %}
+                                                                                <li class="liQ"><label class="oasnotree"><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}.{{ question4.question_code }}</span>{{ question4.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question4.question_enabled }}"></span><a title="New Branch From This Item" class="btn btn-primary btn-xs" href="#" data-toggle="modal" data-target="#add-page-modal" data-question-id="{{ question4.question_id }}" data-question-desc="{{ question4.question_desc }}"><span class="glyphicon glyphicon-plus"></span> Add</a></div></label></li>
+                                                                            {% endif %}
+                                                                            {% for page5 in pages5 %}
+                                                                                <li class="liQ"><label class="tree-toggler"><span class="oastree glyphicon glyphicon-chevron-down"></span><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}.{{ question4.question_code }}</span>{{ question4.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question4.question_enabled }}"></span><a title="Edit" class="btn btn-success btn-xs" href="{{ path_for('surveyPage', {surveyId: survey.survey_id, pageId: page5.page_id}) }}"><span class="glyphicon glyphicon-pencil"></span> Edit</a></div></label>
+                                                                                    <ul class="nav nav-list tree">
+                                                                                        {% set questions5 = questions|wherePropertyEquals('page_id', page5.page_id) %}
+                                                                                        {% for question5 in questions5 %}
+                                                                                            {% set pages6 = pages|wherePropertyEquals('question_id_parent', question5.question_id) %}
+                                                                                            {#START LEVEL 6#}
+                                                                                            {#if children are to follow, start new tree level#}
+                                                                                            {% if pages6|length == 0 %}
+                                                                                                <li class="liQ"><label class="oasnotree"><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}.{{ question4.question_code }}.{{ question5.question_code }}</span>{{ question5.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question5.question_enabled }}"></span><a title="New Branch From This Item" class="btn btn-primary btn-xs" href="#" data-toggle="modal" data-target="#add-page-modal" data-question-id="{{ question5.question_id }}" data-question-desc="{{ question5.question_desc }}"><span class="glyphicon glyphicon-plus"></span> Add</a></div></label></li>
+                                                                                            {% endif %}
+                                                                                            {% for page6 in pages6 %}
+                                                                                                <li class="liQ"><label class="tree-toggler"><span class="oastree glyphicon glyphicon-chevron-down"></span><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}.{{ question4.question_code }}.{{ question5.question_code }}</span>{{ question5.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question5.question_enabled }}"></span><a title="Edit" class="btn btn-success btn-xs" href="{{ path_for('surveyPage', {surveyId: survey.survey_id, pageId: page6.page_id}) }}"><span class="glyphicon glyphicon-pencil"></span> Edit</a></div></label>
+                                                                                                    <ul class="nav nav-list tree">
+                                                                                                        {% set questions6 = questions|wherePropertyEquals('page_id', page6.page_id) %}
+                                                                                                        {% for question6 in questions6 %}
+                                                                                                            {#last level, only questions, no children pages#}
+                                                                                                            <li class="liQ"><label class="oasnotree"><span class="oascode">{{ question1.question_code }}{{ question2.question_code }}.{{ question3.question_code }}.{{ question4.question_code }}.{{ question5.question_code }}.{{ question6.question_code }}</span>{{ question6.question_desc }}<div class="oasedit"><span title="This item will be hidden on the survey. Subsequently, all items that branch from this will be hidden as well." class="glyphicon glyphicon-ban-circle visible_{{ question6.question_enabled }}"></span></div></label></li>
+                                                                                                        {% endfor %}
+                                                                                                    </ul>
+                                                                                                </li>
+                                                                                            {% endfor %}
+                                                                                        {% endfor %}
+                                                                                    </ul>
+                                                                                </li>
+                                                                            {% endfor %}
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                </li>
+                                                            {% endfor %}
+                                                        {% endfor %}
+                                                    </ul>
+                                                </li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block outside_container %}
+    {% if survey.survey_active or survey.response_count %}
+        <div class="modal fade" id="modal-content-edit-warning" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Edit Warning</h4>
+                    </div>
+                    <div class="modal-body" id="modalerrorbody">
+                        <p class="blue strong">This survey is currently active and/or has responses. Making edits to an active survey with responses is strongly discouraged. If edits are absolutely necessary, please ensure changes are minor, such as spelling corrections.</p><p class="strong blue">Restructuring the survey, adding, deleting, or significantly rewording questions may cause the existing survey data to become skewed and possibly unusable. Please proceed with caution.</p><p class="blue strong">It is further recommended to deactivate the survey while  performing edits.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Understood</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function(){
+                $("#modal-content-edit-warning").modal("show");
+            });
+        </script>
+    {% endif %}
+
+    {% embed 'partials/modal.html.twig' with {'id': 'add-page-modal'} %}
+        {% block title %}Add New Page <span class='glyphicon glyphicon-arrow-right'></span> Branching From <span class="question-desc"></span>{% endblock %}
+        {% block content %}
+            <form method="post">
+                <input class="question-id" name="questionId" type="hidden" />
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="pageDesc">Page Title:</label>
+                        <input id="pageDesc" name="txtPageDesc" class="form-control" maxlength="255" placeholder="Page Description" value="{{ page_desc }}" />
+                    </div>
+                    <div class="form-group">
+                        <label for="pageExtra">Page Description:</label>
+                        <textarea id="pageExtra" class="form-control" name="txtPageExtra" style="height:200px !important;"><p>Of the time you devote to <strong>[SURVEY POSITION]</strong>, indicate the percentage dedicated to these category of activities. (Your responses must total 100%)</p></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" name="btnNewPage" value="Create Page" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    <script>
+        $(function() {
+           $('#add-page-modal').on('show.bs.modal', function(event) {
+               var button = $(event.relatedTarget);
+               var questionId = button.data('question-id');
+               var questionDesc = button.data('question-desc');
+
+               var url = '{{ path_for('surveyContent', {surveyId: survey.survey_id}) }}';
+
+               var modal = $(this);
+               modal.find('.question-id').val(questionId);
+               modal.find('.question-desc').html(questionDesc);
+           });
+        });
+    </script>
+{% endblock %}

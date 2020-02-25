@@ -1,0 +1,37 @@
+{% block navigation %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="?rq=assmt"><img src="/images/logo-sm.png" /></a>
+            </div>
+            {% if user %}
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        {% if user.isAdmin() %}
+                            <li>
+                                <a href="{{ path_for('surveys') }}">Surveys</a>
+                            </li>
+                            <li>
+                                <a href="{{ path_for('account') }}">My Account</a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="{{ path_for('logout') }}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            {% endif %}
+        </div>
+        <!-- /.container -->
+    </nav>
+{% endblock %}

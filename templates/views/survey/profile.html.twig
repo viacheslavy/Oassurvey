@@ -1,0 +1,35 @@
+{% extends "layout-account.html.twig" %}
+
+{% block content %}
+    <div id="PDFout">
+        <table class="report-mainheader">
+            <tr>
+                <td>
+                </td>
+                <td style="text-align: right">
+                    <a class="btn btn-primary btn-sm" id="pdf"><span class="glyphicon glyphicon-export" style="text-align: right"></span> <span style="font-size: 10px !important;"> Export PDF</span></a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="{{ survey_info.logo_survey }}" width="130" />
+                </td>
+                <td>
+                    <div class="report-survey-name">{{ survey_info.survey_name }}</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="strong">Respondent Profile</span>
+                </td>
+                <td>
+                    <div class="report-survey-name" style="font-size:14px; font-weight:normal;"># Responding: {{ survey_info.resp_ct }}</div>
+                </td>
+            </tr>
+        </table>
+
+        {% for p in [2, 3, 4, 5, 6] %}
+            {% include 'partials/profile-table.html.twig' with {'result': custom_info[p], 'title': survey_info["cust_#{p}_label"]} %}
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+    <h4 class="title">Working on: {{ survey.survey_name }}</h4>
+    <form method="post">
+        <div class="well" style="margin-top:20px;">
+            {% set response_count = survey.getResponseCount() %}
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue">Survey is Currently: {{ survey.survey_active ? '<span style="font-weight:bold; color:green; font-size:16px;">Active</span>' : '<span style="font-weight:bold; color:red; font-size:16px;">Inactive</span>' }}</p>
+                </div>
+                <div class="col-sm-9">
+                    <button type="submit" name="btnActivate" class="btn btn-primary btn-sm" style="padding:0px 5px; font-weight:normal;" value="1">{{ survey.survey_active ? 'Click To Deactivate' : 'Click To Activate' }}</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue">Survey Name:</p>
+                </div>
+                <div class="col-sm-9">
+                    <a id="edit-survey" class="strong" href="#">{{ survey.survey_name }}</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue">Response Rate:</p>
+                </div>
+                <div class="col-sm-9">
+                    {% set respondent_count = survey.getRespondentCount() %}
+                    {% set response_percent = respondent_count ? ((response_count / respondent_count) * 100)|round : 0 %}
+                    <p class="blue strong">{{ response_count }} of {{ respondent_count }} ({{ response_percent }}%)</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <p class="blue">Completion Rate:</p>
+                </div>
+                <div class="col-sm-9">
+                    {% set completion_count = survey.getCompletionCount() %}
+                    {% set completion_percent = response_count ? ((completion_count / response_count) * 100)|round : 0 %}
+                    <p class="blue strong">{{ completion_count }} of {{ response_count }} ({{ completion_percent }}%)</p>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block outside_container %}
+    {% embed 'partials/modal.html.twig' with {'id': 'edit-survey-modal', 'title': 'Edit Survey'} %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="pageDesc">Survey Name:</label>
+                        <input id="surveyName" name="txtSurveyName" class="form-control" maxlength="255" placeholder="Survey Name" value="{{ survey.survey_name }}" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="del" class="btn btn-danger" name="btnDeleteSurvey">Delete Survey</button>
+                    <input type="submit" class="btn btn-primary" name="btnEditSurvey" value="Save Changes" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    {% embed 'partials/modal.html.twig' with {'id': 'delete-survey-modal'} %}
+        {% block title %}<span class='glyphicon glyphicon-trash'></span> Delete Survey{% endblock %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+                    <p class="redalert strong">WARNING: You are about to permanently delete {{ survey.survey_name }}. In addition, all survey data will be permanently deleted. Are you absolutely sure you wish to continue?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-danger" name="btnDeleteSurvey" value="Permanently Delete Survey" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    <script>
+        $(function() {
+            $('#edit-survey').click(function(e) {
+                $('#edit-survey-modal').modal('show');
+            });
+
+            $('button[name=btnDeleteSurvey]').click(function(e) {
+                e.preventDefault();
+                $('#edit-survey-modal').modal('hide');
+                $('#delete-survey-modal').modal('show');
+            });
+        });
+    </script>
+{% endblock %}

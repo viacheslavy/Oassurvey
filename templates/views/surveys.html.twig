@@ -1,0 +1,84 @@
+{% extends 'layout-account.html.twig' %}
+
+{% block content %}
+    <h4>Surveys {{ accountId }}</h4>
+    <div class="row">
+        <div class="col-sm-12">
+            <a id="create-survey" class="btn btn-primary btn-sm" href="javascript:void(0)"><span class='glyphicon glyphicon-plus'></span> Create Survey Or Make Copy</a>
+        </div>
+    </div>
+    <br />
+    <div class="well">
+        {% for survey in surveys %}
+            <div class="surveyList" style="margin-bottom:5px;">
+                <a class="strong" href="{{ path_for('surveyHome', {surveyId: survey.survey_id}) }}">{{ survey.survey_name }}</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block outside_container %}
+
+    {% embed 'partials/modal.html.twig' with {'id': 'modal-new-survey', 'title': 'New Survey'} %}
+        {% block content %}
+            <form method="post">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="surveyType">Create Options:</label>
+                        <select class="form-control" id="surveyType" name="slctSurveyType">
+                            <option value="1">Create New Survey From Scratch</option>
+                            <option value="2">Copy Existing Survey</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="surveyCopyDiv">
+                        <label for="surveyCopy">Select Survey To Copy:</label>
+                        <select class="form-control" id="surveyCopy" name="slctSurveyToCopy">
+                            <option value=''></option>
+                            {% for survey in surveys %}
+                                <option value="{{ survey.survey_id }}">{{ survey.survey_name }}</option>"
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="surveyName">Survey Name:</label>
+                        <input id="surveyName" name="txtSurveyName" class="form-control" maxlength="255" placeholder="Survey Name" value="" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <input type="submit" class="btn btn-primary" name="btnNewSurvey" value="Create Survey" />
+                </div>
+            </form>
+        {% endblock %}
+    {% endembed %}
+
+    <script>
+        $(function() {
+            $('#surveyCopyDiv').hide();
+            $('#surveyType').change(function () {
+                var thisval = $(this).val();  //get option id
+                if (thisval == 2) {
+                    $('#surveyCopyDiv').slideDown(200);
+                } else {
+                    $( '#surveyCopyDiv' ).slideUp(200);
+                }
+            });
+            $('#surveyCopy').change(function () {
+                var thistext = $('#surveyCopy option:selected').text();  //get exam name
+                if(thistext.length > 0) {
+                    $('#surveyName').val('Copy of ' + thistext);
+                } else {
+                    $('#surveyName').val('');
+                }
+            });
+
+            $('a#create-survey').click(function() {
+                $('#modal-new-survey').modal('show');
+            })
+        });
+    </script>
+{% endblock %}
